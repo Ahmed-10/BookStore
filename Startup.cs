@@ -26,8 +26,8 @@ namespace BookStore
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.AddSingleton<iBookStoreRepository<Auther>, AutherRepository>();
-            services.AddSingleton<iBookStoreRepository<Book>, BookRepository>();
+            services.AddScoped<iBookStoreRepository<Auther>, AutherDbRepository>();
+            services.AddScoped<iBookStoreRepository<Book>, BookDbRepository>();
             services.AddDbContext<BookStoreDbContext>(options =>
             {
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
