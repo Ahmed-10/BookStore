@@ -37,11 +37,7 @@ namespace BookStore.Controllers
         // GET: Book/Create
         public ActionResult Create()
         {
-            var model = new BookAutherViewModel
-            {
-                Authers = FillSelectList()
-            };
-            return View(model);
+            return View(GetAllAuthers());
         }
 
         // POST: Book/Create
@@ -49,34 +45,36 @@ namespace BookStore.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(BookAutherViewModel model)
         {
-            try
+            if (ModelState.IsValid)
             {
-                if(model.AutherID == -1)
+                try
                 {
-                    ViewBag.Message = "Please Select an Auther";
-                    var vmodel = new BookAutherViewModel
+                    if (model.AutherID == -1)
                     {
-                        Authers = FillSelectList()
+                        ViewBag.Message = "Please Select an Auther";
+                        return View(GetAllAuthers());
+                    }
+                    var auther = autherRepository.Find(model.AutherID);
+                    // TODO: Add insert logic here
+                    Book book = new Book
+                    {
+                        //id = model.BookID,
+                        Title = model.Title,
+                        Description = model.Description,
+                        _auther = auther
                     };
-                    return View(vmodel);
-                }
-                var auther = autherRepository.Find(model.AutherID);
-                // TODO: Add insert logic here
-                Book book = new Book
-                {
-                    //id = model.BookID,
-                    Title = model.Title,
-                    Description = model.Description,
-                    _auther = auther
-                };
 
-                bookRepository.Add(book);
-                return RedirectToAction(nameof(Index));
+                    bookRepository.Add(book);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch
+                {
+                    return View();
+                }
             }
-            catch
-            {
-                return View();
-            }
+            ModelState.AddModelError("", "You have to fill all the required fields!");
+            return View(GetAllAuthers());
+           
         }
 
         // GET: Book/Edit/5
@@ -143,12 +141,15 @@ namespace BookStore.Controllers
                 return View();
             }
         }
-        List<Auther> FillSelectList()
+        BookAutherViewModel GetAllAuthers()
         {
             var authers = autherRepository.List().ToList();
             authers.Insert(0, new Auther { id = -1, FullName = "Please Select an Auther" });
-
-            return authers;
+            var model = new BookAutherViewModel
+            {
+                Authers = authers
+            };
+            return model;
         }
     }
 }
