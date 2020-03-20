@@ -9,7 +9,7 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
+<table class="table table-bordered table-striped table-hover">
     <thead>
         <tr>
             <th>
@@ -23,6 +23,9 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model._auther.FullName)
+            </th>
+            <th>
+                Image
             </th>
             <th></th>
         </tr>
@@ -39,9 +42,15 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
-            <th>
+            <td>
                 @Html.DisplayFor(modelItem => item._auther.FullName)
-            </th>
+            </td>
+            <td>
+                @if (item.imgURL != null)
+                {
+                    <img src="~/uploads/@item.imgURL" style="width:64px;" class="img-thumbnail" />
+                }
+            </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id = item.id }) |
                 @Html.ActionLink("Details", "Details", new { id = item.id }) |

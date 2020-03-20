@@ -15,8 +15,11 @@ namespace BookStore.Models.Repositories
             {
                 new Book
                 {
-                    id = 1, Title = "C# Programming", Description = "None",
-                    _auther = new Auther(){ id = 2}
+                    id = 1, 
+                    Title = "C# Programming", 
+                    Description = "None",
+                    _auther = new Auther(){ id = 2},
+                    imgURL = "The_C_Programming.png"
                 }
             };
         }
@@ -50,6 +53,7 @@ namespace BookStore.Models.Repositories
             book.Title = new_element.Title;
             book.Description = new_element.Description;
             book._auther = new_element._auther;
+            book.imgURL = new_element.imgURL;
         }
     }
 }

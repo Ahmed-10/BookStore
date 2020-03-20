@@ -25,5 +25,6 @@ namespace BookStore.ViewModels
 
         //[RegularExpression(@"[a-zA-Z0-9\s_\\.\-:])+(.png|.jpg)$")]
         public IFormFile File { get; set; }
+        public string imgUrl { get; set; }
     }
 }
