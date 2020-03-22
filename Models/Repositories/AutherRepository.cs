@@ -39,6 +39,11 @@ namespace BookStore.Models.Repositories
             return authers;
         }
 
+        public List<Auther> Search(string term)
+        {
+            return authers.Where(a => a.FullName.Contains(term)).ToList();
+        }
+
         public void Update(int _id, Auther element)
         {
             var auther = Find(_id);

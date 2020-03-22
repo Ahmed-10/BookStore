@@ -61,18 +61,10 @@ namespace BookStore.Controllers
                         ViewBag.Message = "Please Select an Auther";
                         return View(GetAllAuthers());
                     }
-                    string fileName = null;
 
-                    if (model.File != null)
-                    {
-                        string uploads = Path.Combine(hosting.WebRootPath, "uploads");
-                        fileName = model.File.FileName;
-                        string fullPath = Path.Combine(uploads, fileName);
-                        string oldFileName = bookRepository.Find(model.BookID).imgURL;
-                        string fullOldPath = Path.Combine(uploads, oldFileName);
-                        System.IO.File.Delete(fullOldPath);
-                        model.File.CopyTo(new FileStream(fullPath, FileMode.Create));
-                    }
+                    DeleteFile(model.imgUrl);
+                    string fileName = UploadFile(model.File);
+
                     var auther = autherRepository.Find(model.AutherID);
                     // TODO: Add insert logic here
                     Book book = new Book
@@ -121,25 +113,13 @@ namespace BookStore.Controllers
             try
             {
                 // TODO: Add update logic here
-                string fileName = null;
+                
+                string fileName = ChangeFile(viewModel.File, viewModel.imgUrl);
 
-                if (viewModel.File != null)
-                {
-                    string uploads = Path.Combine(hosting.WebRootPath, "uploads");
-                    fileName = viewModel.File.FileName;
-                    string fullPath = Path.Combine(uploads, fileName);
-
-                    string oldFileName = bookRepository.Find(viewModel.BookID).imgURL;
-                    string fullOldPath = Path.Combine(uploads, oldFileName);
-
-                    //Delete the old File
-                    System.IO.File.Delete(fullOldPath);
-                    //insert the old file
-                    viewModel.File.CopyTo(new FileStream(fullPath, FileMode.Create));
-                }
                 var auther = autherRepository.Find(viewModel.AutherID);
                 Book book = new Book
                 {
+                    id = viewModel.BookID,
                     Title = viewModel.Title,
                     Description = viewModel.Description,
                     _auther = auther,
@@ -149,7 +129,7 @@ namespace BookStore.Controllers
                 bookRepository.Update(id, book);
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception e)
             {
                 return View();
             }
@@ -167,9 +147,13 @@ namespace BookStore.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ConfirmDelete(int id)
         {
+            
             try
             {
                 // TODO: Add delete logic here
+                string fileName = bookRepository.Find(id).imgURL;
+                DeleteFile(fileName);
+                              
                 bookRepository.Delete(id);
                 return RedirectToAction(nameof(Index));
             }
@@ -177,6 +161,12 @@ namespace BookStore.Controllers
             {
                 return View();
             }
+        }
+
+        public ActionResult Search(string term)
+        {
+            var result = bookRepository.Search(term);
+            return View("Index", result);
         }
         BookAutherViewModel GetAllAuthers()
         {
@@ -187,6 +177,38 @@ namespace BookStore.Controllers
                 Authers = authers
             };
             return model;
+        }
+
+        string UploadFile(IFormFile file)
+        {
+            if(file != null)
+            {
+                string uploads = Path.Combine(hosting.WebRootPath, "uploads");
+                string fullPath = Path.Combine(uploads, file.FileName);
+                file.CopyTo(new FileStream(fullPath, FileMode.Create));
+                return file.FileName;
+            }
+            else return null;
+        }
+
+        void DeleteFile(string imgUrl)
+        {
+            if(imgUrl != null)
+            {
+                string uploads = Path.Combine(hosting.WebRootPath, "uploads");
+                string fullPath = Path.Combine(uploads, imgUrl);
+                System.IO.File.Delete(fullPath);
+            }
+        }
+
+        string ChangeFile(IFormFile file, string oldImg)
+        {
+            if (file.FileName != null)
+            {
+                if (oldImg != null) DeleteFile(oldImg);
+                return UploadFile(file);
+            }
+            else return oldImg;            
         }
     }
 }

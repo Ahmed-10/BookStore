@@ -12,5 +12,6 @@ namespace BookStore.Models.Repositories
         void Add(Type element);
         void Update(int _id, Type element);
         void Delete(int _id);
+        List<Type> Search(string term);
     }
 }

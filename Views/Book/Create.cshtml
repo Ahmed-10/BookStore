@@ -37,6 +37,7 @@
                         asp-items="@(new SelectList(Model.Authers, "id", "FullName"))"></select>
                 <span asp-validation-for="AutherID" class="text-danger"></span>
             </div>
+            <input type="hidden" asp-for="imgUrl" class="form-control"/>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-info" />
                 <a asp-action="Index" class="btn btn-outline-info">Back to List</a>

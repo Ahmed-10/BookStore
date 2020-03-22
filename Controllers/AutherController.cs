@@ -102,5 +102,11 @@ namespace BookStore.Controllers
                 return View();
             }
         }
+
+        public ActionResult Search(string term)
+        {
+            var result = autherReposetory.Search(term);
+            return View("Index", result);
+        }
     }
 }
